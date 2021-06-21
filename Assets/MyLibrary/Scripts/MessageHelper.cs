@@ -13,6 +13,7 @@ public class MessageHelper : MonoBehaviourSingleton<MessageHelper>
     {
         StartCoroutine(RemoveMessageCoroutine());
     }
+
     IEnumerator RemoveMessageCoroutine()
     {
         var wait = new WaitForEndOfFrame();
@@ -30,8 +31,19 @@ public class MessageHelper : MonoBehaviourSingleton<MessageHelper>
     {
         delayTaskQueue.Enqueue(() => { Message.RemoveListener<T>(callback); });
     }
+
+    public void AddListenerEndFrameLocal<T>(Action<T> callback) where T : Message
+    {
+        delayTaskQueue.Enqueue(() => { Message.AddListener<T>(callback); });
+    }
+
     public static void RemoveListenerEndFrame<T>(Action<T> callback) where T : Message
     {
         Instance.RemoveListenerEndFrameLocal<T>(callback);
+    }
+
+    public static void AddListenerEndFrame<T>(Action<T> callback) where T : Message
+    {
+        Instance.AddListenerEndFrameLocal<T>(callback);
     }
 }
