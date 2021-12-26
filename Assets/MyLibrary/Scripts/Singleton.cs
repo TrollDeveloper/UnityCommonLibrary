@@ -11,7 +11,7 @@ public class MonoBehaviourSingleton<T> : MonoBehaviour where T : MonoBehaviour
         {
             if (instance == null)
             {
-                //ÀÌ¹Ì ÀÖ´Â ½Ì±ÛÅæÅ¬·¡½º ¹Ş¾Æ¿À±â.
+                //ì´ë¯¸ ìˆëŠ” ì‹±ê¸€í†¤í´ë˜ìŠ¤ ë°›ì•„ì˜¤ê¸°.
                 T[] objs = FindObjectsOfType<T>();
                 if (objs.Length > 1)
                 {
@@ -24,14 +24,14 @@ public class MonoBehaviourSingleton<T> : MonoBehaviour where T : MonoBehaviour
                 }
                 else
                 {
-                    //½Ì±ÛÅæ Å¬·¡½º ÇÁ¸®ÆÕ ÀÖÀ»°æ¿ì »ı¼º.
+                    //ì‹±ê¸€í†¤ í´ë˜ìŠ¤ í”„ë¦¬íŒ¹ ìˆì„ê²½ìš° ìƒì„±.
                     GameObject gObj = Resources.Load<GameObject>(rootPath + typeof(T).Name);
                     if (gObj != null)
                     {
                         instance = Instantiate(gObj).GetComponent<T>();
                     }
 
-                    //¾øÀ¸¸é »õ·Î¿î ¿ÀºêÁ§Æ®·Î »ı¼º.
+                    //ì—†ìœ¼ë©´ ìƒˆë¡œìš´ ì˜¤ë¸Œì íŠ¸ë¡œ ìƒì„±.
                     if (instance == null)
                     {
                         instance = new GameObject().AddComponent<T>();

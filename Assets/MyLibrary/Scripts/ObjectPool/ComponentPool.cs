@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//ObjectPoolManager°¡ GameObject·Î µÅÀÖ¾î¼­, SpawnÇÒ¶§¸¶´Ù GetComponent ÇÏ´Â °Í ¹æÁö.
+//ObjectPoolManagerê°€ GameObjectë¡œ ë¼ìˆì–´ì„œ, Spawní• ë•Œë§ˆë‹¤ GetComponent í•˜ëŠ” ê²ƒ ë°©ì§€.
 public class ComponentPool<T> where T : MonoBehaviour
 {
     private Dictionary<GameObject, T> instanceLookup = new Dictionary<GameObject, T>();

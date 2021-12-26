@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Mathematics;
 using UnityEngine;
 
 public class ObjectPoolManager : MonoBehaviourSingleton<ObjectPoolManager>
@@ -13,6 +12,15 @@ public class ObjectPoolManager : MonoBehaviourSingleton<ObjectPoolManager>
     protected override void Awake()
     {
         base.Awake();
+        prefabLookup = new Dictionary<GameObject, ObjectPool<GameObject>>();
+        instanceLookup = new Dictionary<GameObject, ObjectPool<GameObject>>();
+        parentLookup = new Dictionary<GameObject, Transform>();
+    }
+    
+    //TODO : ì„ì‹œì½”ë“œ
+    public void Reset()
+    {
+        
         prefabLookup = new Dictionary<GameObject, ObjectPool<GameObject>>();
         instanceLookup = new Dictionary<GameObject, ObjectPool<GameObject>>();
         parentLookup = new Dictionary<GameObject, Transform>();
@@ -48,7 +56,7 @@ public class ObjectPoolManager : MonoBehaviourSingleton<ObjectPoolManager>
             prefabLookup.Remove(prefab);
         }
 
-        //ºÎ¸ğ¿ÀºêÁ§Æ® Á¦°Å.
+        //ë¶€ëª¨ì˜¤ë¸Œì íŠ¸ ì œê±°.
         if (parentLookup.ContainsKey(prefab))
         {
             Destroy(parentLookup[prefab]);
@@ -97,13 +105,13 @@ public class ObjectPoolManager : MonoBehaviourSingleton<ObjectPoolManager>
         {
             var pool = instanceLookup[clone];
 
-            //¹İÈ¯½Ã ¿ÀºêÁ§Æ® Ç® ºÎ¸ğ·Î Àç¼³Á¤.
+            //ë°˜í™˜ì‹œ ì˜¤ë¸Œì íŠ¸ í’€ ë¶€ëª¨ë¡œ ì¬ì„¤ì •.
             if (parentLookup.ContainsKey(pool.Original))
             {
-                clone.transform.parent = parentLookup[pool.Original];
+                clone.transform.SetParent(parentLookup[pool.Original]);
             }
 
-            //½ºÄÉÀÏ ¿øº»À¸·Î º¯°æ.
+            //ìŠ¤ì¼€ì¼ ì›ë³¸ìœ¼ë¡œ ë³€ê²½.
             if (pool.Original != null)
             {
                 clone.transform.localScale = pool.Original.transform.localScale;
@@ -122,9 +130,7 @@ public class ObjectPoolManager : MonoBehaviourSingleton<ObjectPoolManager>
 
     private GameObject InstantiatePrefab(GameObject prefab)
     {
-        var go = Instantiate(prefab) as GameObject;
-
-        //ºÎ¸ğ Ã£±â.
+        //ë¶€ëª¨ ì°¾ê¸°.
         Transform parent = transform;
         if (parentLookup.ContainsKey(prefab))
         {
@@ -132,15 +138,15 @@ public class ObjectPoolManager : MonoBehaviourSingleton<ObjectPoolManager>
         }
         else
         {
-            //ºÎ¸ğ¾øÀ¸¸é »õ·Î»ı¼º.
+            //ë¶€ëª¨ì—†ìœ¼ë©´ ìƒˆë¡œìƒì„±.
             parent = new GameObject().transform;
             parent.parent = transform;
             parent.name = prefab.name;
             parentLookup.Add(prefab, parent);
         }
 
-        //ºÎ¸ğ¼³Á¤ ÈÄ Deactive.
-        go.transform.parent = parent;
+        //ë¶€ëª¨ì„¤ì • í›„ Deactive.
+        var go = Instantiate(prefab, parent, true) as GameObject;
         go.SetActive(false);
         return go;
     }
