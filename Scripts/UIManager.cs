@@ -16,7 +16,7 @@ namespace UI
     {
         private Dictionary<Type, DialogBase> dialogMap = new Dictionary<Type, DialogBase>();
 
-        protected void Awake()
+        protected override void Awake()
         {
             base.Awake();
             var dialogs = transform.GetComponentsInChildren<DialogBase>(true);
