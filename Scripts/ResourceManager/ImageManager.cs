@@ -4,14 +4,12 @@ using UnityEngine;
 
 public class ImageManager : MonoBehaviourSingleton<ImageManager>
 {
-    [SerializeField]
-    SpriteResourceDB spriteDB;
-    [SerializeField]
-    TextureResourceDB textureDB;
-    
+    [SerializeField] SpriteResourceDB spriteDB;
+    [SerializeField] TextureResourceDB textureDB;
+
     public Sprite GetSprite(int id)
     {
-        if (spriteDB == null)
+        if (ReferenceEquals(spriteDB, null))
         {
             spriteDB = Resources.Load<SpriteResourceDB>("ResourceDB/SpriteDB");
             if (spriteDB == null)
@@ -20,11 +18,13 @@ public class ImageManager : MonoBehaviourSingleton<ImageManager>
                 return null;
             }
         }
+
         return spriteDB.GetItem(id);
     }
+
     public Texture2D GetTexture(int id)
     {
-        if (textureDB == null)
+        if (ReferenceEquals(textureDB, null))
         {
             textureDB = Resources.Load<TextureResourceDB>("ResourceDB/TextureDB");
             if (textureDB == null)
@@ -33,6 +33,7 @@ public class ImageManager : MonoBehaviourSingleton<ImageManager>
                 return null;
             }
         }
+
         return textureDB.GetItem(id);
     }
 }

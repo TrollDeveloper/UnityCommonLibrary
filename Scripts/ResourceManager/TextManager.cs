@@ -4,12 +4,11 @@ using UnityEngine;
 
 public class TextManager : MonoBehaviourSingleton<TextManager>
 {
-    [SerializeField]
-    TextResourceDB textDB;
+    [SerializeField] TextResourceDB textDB;
 
     public string GetText(int id)
     {
-        if (textDB == null)
+        if (ReferenceEquals(textDB, null))
         {
             textDB = Resources.Load<TextResourceDB>("ResourceDB/TextDB");
             if (textDB == null)
@@ -18,6 +17,7 @@ public class TextManager : MonoBehaviourSingleton<TextManager>
                 return null;
             }
         }
+
         return textDB.GetItem(id);
     }
 }

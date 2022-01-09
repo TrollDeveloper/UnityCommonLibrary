@@ -16,11 +16,10 @@ public class ObjectPoolManager : MonoBehaviourSingleton<ObjectPoolManager>
         instanceLookup = new Dictionary<GameObject, ObjectPool<GameObject>>();
         parentLookup = new Dictionary<GameObject, Transform>();
     }
-    
+
     //TODO : 임시코드
     public void Reset()
     {
-        
         prefabLookup = new Dictionary<GameObject, ObjectPool<GameObject>>();
         instanceLookup = new Dictionary<GameObject, ObjectPool<GameObject>>();
         parentLookup = new Dictionary<GameObject, Transform>();
@@ -112,7 +111,7 @@ public class ObjectPoolManager : MonoBehaviourSingleton<ObjectPoolManager>
             }
 
             //스케일 원본으로 변경.
-            if (pool.Original != null)
+            if (!ReferenceEquals(pool.Original, null))
             {
                 clone.transform.localScale = pool.Original.transform.localScale;
             }

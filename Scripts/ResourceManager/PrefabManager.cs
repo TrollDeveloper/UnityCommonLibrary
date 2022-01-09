@@ -4,12 +4,11 @@ using UnityEngine;
 
 public class PrefabManager : MonoBehaviourSingleton<PrefabManager>
 {
-    [SerializeField]
-    PrefabResourceDB prefabDB;
+    [SerializeField] PrefabResourceDB prefabDB;
 
     public GameObject GetPrefab(int id)
     {
-        if (prefabDB == null)
+        if (ReferenceEquals(prefabDB, null))
         {
             prefabDB = Resources.Load<PrefabResourceDB>("ResourceDB/PrefabDB");
             if (prefabDB == null)
@@ -18,6 +17,7 @@ public class PrefabManager : MonoBehaviourSingleton<PrefabManager>
                 return null;
             }
         }
+
         return prefabDB.GetItem(id);
     }
 }

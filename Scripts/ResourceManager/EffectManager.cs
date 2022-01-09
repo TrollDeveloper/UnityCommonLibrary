@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class EffectManager : MonoBehaviourSingleton<EffectManager>
 {
-    [SerializeField]
-    PrefabResourceDB effectPrefabDB;
+    [SerializeField] PrefabResourceDB effectPrefabDB;
 
-    List<GameObject> activeEffectList = new List<GameObject>();
+    readonly List<GameObject> activeEffectList = new List<GameObject>();
+    readonly ComponentPool<ParticleSystem> particleComponentPool = new ComponentPool<ParticleSystem>();
 
     protected override void Awake()
     {
@@ -18,39 +18,41 @@ public class EffectManager : MonoBehaviourSingleton<EffectManager>
     {
         PlayOneShot(id, null, position);
     }
+
     public void PlayOneShot(int id, Transform parent, Vector3 localPosition)
     {
         PlayEffect(id, parent, localPosition, -1f);
     }
+
     public void PlayTimer(int id, Vector3 position, float timer)
     {
         PlayTimer(id, null, position, timer);
     }
+
     public void PlayTimer(int id, Transform parent, Vector3 localPosition, float timer)
     {
         PlayEffect(id, parent, localPosition, timer);
     }
+
     void PlayEffect(int id, Transform parent, Vector3 localPosition, float timer = -1f)
     {
         var clone = SpawnEffect(id, parent, localPosition);
-        if (clone == null) { return; }
+        if (ReferenceEquals(clone, null))
+        {
+            return;
+        }
 
-        var particle = clone.GetComponent<ParticleSystem>();
-        if (particle == null)
-        {//∆ƒ∆º≈¨ æ¯¥¬ ø¿∫Í¡ß∆Æ∏È GameObjectTimer∑Œ.
+        var particle = particleComponentPool.GetComponent(clone);
+        if (ReferenceEquals(particle, null))
+        {
+            //ÌååÌã∞ÌÅ¥ ÏóÜÎäî Ïò§Î∏åÏ†ùÌä∏Î©¥ GameObjectTimerÎ°ú.
             DebugLog.LogWarning("Effect Manager Play One Shot Not Particle System - ID : " + id);
             StartCoroutine(PlayGameObjectTimerCoroutine(clone, timer < 0f ? 30f : timer));
         }
         else
-        {//∆ƒ∆º≈¨ ¿÷¿∏∏È ∆ƒ∆º≈¨ ∞¸∑√ ƒ⁄∑Á∆æΩ««‡.
-            if (timer < 0f)
-            {
-                StartCoroutine(PlayOneShotCoroutine(particle));
-            }
-            else
-            {
-                StartCoroutine(PlayTimerCoroutine(particle, timer));
-            }
+        {
+            //ÌååÌã∞ÌÅ¥ ÏûàÏúºÎ©¥ ÌååÌã∞ÌÅ¥ Í¥ÄÎ†® ÏΩîÎ£®Ìã¥Ïã§Ìñâ.
+            StartCoroutine(timer < 0f ? PlayOneShotCoroutine(particle) : PlayTimerCoroutine(particle, timer));
         }
     }
 
@@ -64,6 +66,7 @@ public class EffectManager : MonoBehaviourSingleton<EffectManager>
 
         ReleaseEffect(particle.gameObject);
     }
+
     IEnumerator PlayTimerCoroutine(ParticleSystem particle, float timer)
     {
         particle.Play();
@@ -72,6 +75,7 @@ public class EffectManager : MonoBehaviourSingleton<EffectManager>
             yield return null;
             timer -= Time.deltaTime;
         }
+
         particle.Stop(true);
         while (particle.IsAlive(true))
         {
@@ -95,7 +99,7 @@ public class EffectManager : MonoBehaviourSingleton<EffectManager>
 
     public GameObject SpawnEffect(int id, Transform parent, Vector3 localPosition)
     {
-        if (effectPrefabDB == null)
+        if (ReferenceEquals(effectPrefabDB, null))
         {
             effectPrefabDB = Resources.Load<PrefabResourceDB>("ResourceDB/EffectPrefabDB");
             if (effectPrefabDB == null)
@@ -106,7 +110,7 @@ public class EffectManager : MonoBehaviourSingleton<EffectManager>
         }
 
         GameObject prefab = effectPrefabDB.GetItem(id);
-        if (prefab == null)
+        if (ReferenceEquals(prefab, null))
         {
             DebugLog.LogError("Effect Manager Spawn ID Error - ID : " + id);
             return null;
@@ -125,11 +129,13 @@ public class EffectManager : MonoBehaviourSingleton<EffectManager>
     {
         ReleaseEffect(particle.gameObject);
     }
+
     public void ReleaseEffect(GameObject clone)
     {
         ObjectPoolManager.Instance.ReleaseObject(clone);
         activeEffectList.Remove(clone);
     }
+
     public void ReleaseEffectAll()
     {
         for (int i = activeEffectList.Count - 1; i > 0; i--)
