@@ -1,1 +1,24 @@
 *.meta
+
+# Build outputs stay local by default.
+*.apk
+*.aab
+*.ipa
+/*.exe
+/*.msi
+/*.dmg
+/*.app/
+/*.xcarchive/
+/build/
+/Build/
+/builds/
+/Builds/
+/dist/
+/artifacts/
+/output/builds/
+/output/ios/
+/output/android/
+/build-*.zip
+/*-build.zip
+/build-*.tar.gz
+/*-build.tar.gz
